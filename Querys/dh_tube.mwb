@@ -1,0 +1,121 @@
+/*NOMES:	CRISTIANO ANTONIO DEWES,
+			GABRIELA LIMA,
+            JONAS PACHECO,
+            MOISES BOLLELA,
+            VINICIUS EVANDRO*/
+
+CREATE DATABASE IF NOT EXISTS dh_tube;
+
+USE dh_tube;
+
+CREATE TABLE avatar 
+(
+	idAvatar	INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome		VARCHAR(45),
+    urlimagem	VARCHAR(100)
+);
+
+CREATE TABLE pais
+(
+	idPais		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome		VARCHAR(100)
+);
+
+CREATE TABLE usuario
+(
+	idUsuario		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome			VARCHAR(45),
+    email			VARCHAR(45),
+    senha			VARCHAR(45),
+    dataNacimento	DATETIME,
+    cep				VARCHAR(45),
+    Pais_idPais		INT,
+    Avatar_idAvatar	INT,
+    
+    CONSTRAINT usuario_pais
+		FOREIGN KEY (Pais_idPais)
+        REFERENCES pais (idPais),
+        
+	CONSTRAINT usuario_avatar
+		FOREIGN KEY (Avatar_idAvatar)
+        REFERENCES avatar (idAvatar)
+);
+
+CREATE TABLE playlist
+(
+	idPlaylist			INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome				VARCHAR(45),
+    dataCriacao			DATETIME,
+    privado				SMALLINT,
+    Usuario_idUsuario	INT,
+    
+    CONSTRAINT playlist_usuario
+		FOREIGN KEY (Usuario_idUsuario)
+        REFERENCES usuario (idUsuario)
+);
+
+CREATE TABLE canal
+(
+	idCanal				INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome				VARCHAR(45),
+    descricao			TEXT,
+    dataCriacao			DATETIME,
+    Usuario_idUsuario	INT,
+    
+    CONSTRAINT canal_usuario
+		FOREIGN KEY (Usuario_idUsuario)
+        REFERENCES usuario (idUsuario)
+);
+
+CREATE TABLE video
+(
+	idVideo				INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Usuario_idUsuario	INT,
+    titulo				VARCHAR(100),
+    descricao			TEXT,
+    tamanho				DOUBLE,
+    nomeArquivo			VARCHAR(100),
+    duracao				DOUBLE,
+    imagem				VARCHAR(100),
+    qtdReproducoes		INT,
+    qtdLikes			INT,
+    qtdDislikes			INT,
+    privado				SMALLINT,
+    dataPublicacao		DATETIME,
+    
+    CONSTRAINT video_usuario
+		FOREIGN KEY (Usuario_idUsuario)
+        REFERENCES usuario (idUsuario)
+);
+
+CREATE TABLE playlist_video
+(
+	Video_idVideo		INT,
+    Playlist_idPlaylist	INT,
+    
+    CONSTRAINT playlist_video_video
+		FOREIGN KEY (Video_idVideo)
+        REFERENCES video (idVideo),
+        
+	CONSTRAINT playlist_video_playlist
+		FOREIGN KEY (Playlist_idPlaylist)
+        REFERENCES playlist (idPlaylist)
+);
+
+INSERT INTO pais (nome)
+VALUES ('Brasil'), ('Argentina'), ('USA'), ('Mexico'), ('Paraguai');
+
+INSERT INTO avatar (nome, urlimagem)
+VALUES ('saiondc', 'semUrl');
+
+SELECT * FROM pais;
+
+INSERT INTO usuario (nome, email, senha, dataNacimento, cep, Pais_idPais, Avatar_idAvatar)
+Values ('João', 'joao@yahoo.com', '12345', '1995-11-08', '95773000', '1', '1'),
+		('Maria', 'maria@yahoo.com', '12345', '1999-12-24', '9874500', '4', 1);
+        
+SELECT * FROM usuario;
+
+UPDATE usuario SET email = 'maria@hotmail.com' WHERE idUsuario = 2;
+
+DELETE FROM usuario WHERE nome = 'João';
